@@ -1,9 +1,9 @@
 public class Card {
     enum Suit {
-        SPADES,
-        CLUBS,
-        DIAMONDS,
-        HEARTS
+        Spades,
+        Clubs,
+        Diamonds,
+        Hearts
     }
 
     private int rank;
@@ -28,5 +28,29 @@ public class Card {
         imgPath.append(getSuit().name().charAt(0));
         imgPath.append(".png");
         return imgPath.toString();
-    } 
+    }
+
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        switch (getRank()) {
+            case 1:
+                result.append("Ace");
+                break;
+            case 11:
+                result.append("Jack");
+                break;
+            case 12:
+                result.append("Queen");
+                break;
+            case 13:
+                result.append("King");
+                break;
+            default:
+                result.append(getRank());
+                break;
+        }
+        result.append(" of ");
+        result.append(getSuit());
+        return result.toString();
+    }
 }
