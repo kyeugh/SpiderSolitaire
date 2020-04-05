@@ -12,11 +12,9 @@ public class Deck {
     public Deck(int n) {
         if (n != 1 && n != 2 && n != 4)
             n = 1;
-        else {
-            numSuits = n;
-            populateDeck();
-            shuffle();
-        }
+        numSuits = n;
+        populateDeck();
+        shuffle();
     }
 
     public Card top() {
