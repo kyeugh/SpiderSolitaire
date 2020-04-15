@@ -1,9 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
-import javax.lang.model.util.ElementScanner6;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +18,7 @@ public class Card extends JPanel {
     private int x, y;
     private Suit suit;
     private boolean isFaceUp;
+    private Image frontImage, backImage;
     Card child;
 
     public Card(Suit s, int r) {
@@ -29,10 +28,29 @@ public class Card extends JPanel {
         child = null;
         x = 0;
         y = 0;
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                flip();
+                repaint();
+            }
+        });
+        try {
+            Image cardImage = ImageIO.read(new File(getImagePath()));
+            frontImage = cardImage.getScaledInstance(115, 175, Image.SCALE_SMOOTH);
+            cardImage = ImageIO.read(new File("assets/green_back.png"));
+            backImage = cardImage.getScaledInstance(115, 175, Image.SCALE_SMOOTH);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        setBackground(new Color(0,0,0,0));
+        setOpaque(false);
+        setPreferredSize(new Dimension(115, 175));
     }
 
-    public void show() {
-        isFaceUp = true;
+    public void flip() {
+        isFaceUp = !isFaceUp;
     }
 
     public int getRank() {
@@ -60,9 +78,8 @@ public class Card extends JPanel {
     }
 
     public void setChild(Card c) {
-        // debug function, will remove later
         c.setX(this.x);
-        c.setY(this.y + 45);
+        c.setY(this.y + 30);
         child = c;
     }
 
@@ -76,13 +93,9 @@ public class Card extends JPanel {
 
     private String getImagePath() {
         StringBuilder imgPath = new StringBuilder("assets/");
-        if (isFaceUp) {
-            imgPath.append(getRank());
-            imgPath.append(getSuit().name().charAt(0));
-            imgPath.append(".png");
-        }
-        else
-            imgPath.append("green_back.png");
+        imgPath.append(getRank());
+        imgPath.append(getSuit().name().charAt(0));
+        imgPath.append(".png");
         return imgPath.toString();
     }
 
@@ -114,14 +127,6 @@ public class Card extends JPanel {
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Image cardImage;
-        try {
-            cardImage = ImageIO.read(new File(getImagePath()));
-            Image resizedCard = cardImage.getScaledInstance(115, 175, Image.SCALE_SMOOTH);
-            g.drawImage(resizedCard, x, y, this);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        };
+        g.drawImage(isFaceUp ? frontImage : backImage, 0, 0, this);
     }
 }

@@ -13,11 +13,11 @@ class SpiderSolitaire {
         frame.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTH;
+        gbc.weightx = .8;
         gbc.weighty = 1;
         /* game code goes here */
-        for (int i = 0; i < 10; i++)
-            frame.add(new Pile(deck, 5));
-        frame.setLayout(new FlowLayout(FlowLayout.CENTER));
+        for (int i = 0; i < 9; i++)
+            frame.add(new Pile(deck, 3), gbc);
         /* end game code */
         /* menu bar */
         JMenuBar menuBar = new JMenuBar();
