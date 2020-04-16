@@ -16,8 +16,15 @@ class SpiderSolitaire {
         gbc.weightx = .8;
         gbc.weighty = 1;
         /* game code goes here */
-        for (int i = 0; i < 9; i++)
-            frame.add(new Pile(deck, 3), gbc);
+        Pile piles[] = new Pile[9];
+        for (int i = 0; i < 9; i++) {
+            piles[i] = new Pile(deck, 3);
+            frame.add(piles[i], gbc);
+        }
+        Card testCard = new Card(Card.Suit.Spades, 1);
+        testCard.setChild(new Card(Card.Suit.Hearts, 12));
+        piles[1].addCard(testCard);
+        piles[1].take(testCard);
         /* end game code */
         /* menu bar */
         JMenuBar menuBar = new JMenuBar();

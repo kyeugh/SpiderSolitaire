@@ -15,46 +15,39 @@ public class Card extends JPanel {
     }
 
     private int rank;
-    private int x, y;
     private Suit suit;
-    private boolean isFaceUp;
-    private Image frontImage, backImage;
+    private boolean isFaceUp,
+                    isSelected;
+    private Image frontImage,
+                  backImage;
     Card child;
-    private int pressedX;
-    private int pressedY;
 
     public Card(Suit s, int r) {
         suit = s;
         rank = r;
         isFaceUp = false;
+        isSelected = false;
         child = null;
-        x = 0;
-        y = 0;
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                pressedX = e.getX();
-                pressedY = e.getY();
+                Card c = Card.this;
+                boolean alreadySelected = c.selected();
+                while (c != null) {
+                    if (alreadySelected)
+                        c.deselect();
+                    else
+                        c.select();
+                    c = c.getChild();
+                }
             }
-        });
-        addMouseListener(new MouseAdapter() {
-           @Override
-           public void mouseReleased(MouseEvent e){
-               //repaint();
+            @Override
+            public void mouseReleased(MouseEvent e){
+                repaint();
            }
         });
-        addMouseMotionListener(new MouseAdapter(){
-            @Override
-            public void mouseDragged(MouseEvent e){
-                //System.out.print("movedX " + (e.getX() - pressedX) + "points\n");
-                //System.out.print("movedY " + (e.getX() - pressedY) + "points\n");
-                int newX = (getX() + (e.getX() - pressedX));
-                int newY = (getY() + (e.getY() - pressedY));
-                setX(e.getX());
-                setY(e.getY());
-                repaint();
-            }
-        });
+
         try {
             Image cardImage = ImageIO.read(new File(getImagePath()));
             frontImage = cardImage.getScaledInstance(115, 175, Image.SCALE_SMOOTH);
@@ -66,16 +59,11 @@ public class Card extends JPanel {
         }
         setBackground(new Color(0,0,0,0));
         setOpaque(false);
-        setPreferredSize(new Dimension(115, 175));
+        setPreferredSize(new Dimension(135, 175));
     }
 
     public void flip() {
         isFaceUp = !isFaceUp;
-    }
-
-    public Card self()
-    {
-        return this;
     }
 
     public int getRank() {
@@ -86,25 +74,7 @@ public class Card extends JPanel {
         return suit;
     }
 
-    public void setX(int newX) {
-        x = newX;
-    }
-
-    public void setY(int newY) {
-        y = newY;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
     public void setChild(Card c) {
-        c.setX(this.x);
-        c.setY(this.y + 30);
         child = c;
     }
 
@@ -114,6 +84,20 @@ public class Card extends JPanel {
 
     public boolean hasChild() {
         return child != null;
+    }
+
+    public void select() {
+        isSelected = true;
+        repaint();
+    }
+
+    public void deselect() {
+        isSelected = false;
+        repaint();
+    }
+
+    public boolean selected() {
+        return isSelected;
     }
 
     private String getImagePath() {
@@ -152,6 +136,7 @@ public class Card extends JPanel {
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(isFaceUp ? frontImage : backImage, 0, 0, this);
+        int x = isSelected ? 20 : 0;
+        g.drawImage(isFaceUp ? frontImage : backImage, x, 0, this);
     }
 }
