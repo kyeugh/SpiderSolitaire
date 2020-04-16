@@ -20,6 +20,8 @@ public class Card extends JPanel {
     private boolean isFaceUp;
     private Image frontImage, backImage;
     Card child;
+    private int pressedX;
+    private int pressedY;
 
     public Card(Suit s, int r) {
         suit = s;
@@ -31,7 +33,25 @@ public class Card extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                flip();
+                pressedX = e.getX();
+                pressedY = e.getY();
+            }
+        });
+        addMouseListener(new MouseAdapter() {
+           @Override
+           public void mouseReleased(MouseEvent e){
+               //repaint();
+           }
+        });
+        addMouseMotionListener(new MouseAdapter(){
+            @Override
+            public void mouseDragged(MouseEvent e){
+                //System.out.print("movedX " + (e.getX() - pressedX) + "points\n");
+                //System.out.print("movedY " + (e.getX() - pressedY) + "points\n");
+                int newX = (getX() + (e.getX() - pressedX));
+                int newY = (getY() + (e.getY() - pressedY));
+                setX(e.getX());
+                setY(e.getY());
                 repaint();
             }
         });
@@ -51,6 +71,11 @@ public class Card extends JPanel {
 
     public void flip() {
         isFaceUp = !isFaceUp;
+    }
+
+    public Card self()
+    {
+        return this;
     }
 
     public int getRank() {
