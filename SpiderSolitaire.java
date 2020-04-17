@@ -1,12 +1,17 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.Vector;
 
 class SpiderSolitaire {
     Deck deck;
     JFrame frame;
+    boolean cardsSelected;
+    Vector<Card> cards;
 
     public SpiderSolitaire() {
-        deck = new Deck(4);
+        deck = new Deck(4, this);
+        cardsSelected = false; // for identifying that a group of cards has been clicked
+        cards = null; // for holding a batch of selected cards
         frame = new JFrame("Spider Solitaire");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
@@ -16,15 +21,23 @@ class SpiderSolitaire {
         gbc.weightx = .8;
         gbc.weighty = 1;
         /* game code goes here */
-        Pile piles[] = new Pile[9];
-        for (int i = 0; i < 9; i++) {
-            piles[i] = new Pile(deck, 3);
+        Pile piles[] = new Pile[10];
+        for (int i = 0; i < 10; i++) {
+            if(i < 4)
+                piles[i] = new Pile(deck, 6);
+            else
+                piles[i] = new Pile(deck, 5);
             frame.add(piles[i], gbc);
         }
-        Card testCard = new Card(Card.Suit.Spades, 1);
-        testCard.setChild(new Card(Card.Suit.Hearts, 12));
+
+        // test code: should be removed
+        /*
+        Card testCard = new Card(Card.Suit.Spades, 1, this);
+        testCard.setChild(new Card(Card.Suit.Hearts, 12, this));
         piles[1].addCard(testCard);
         piles[1].take(testCard);
+        */
+
         /* end game code */
         /* menu bar */
         JMenuBar menuBar = new JMenuBar();
@@ -51,6 +64,33 @@ class SpiderSolitaire {
         frame.setSize(1250, 900);
         frame.setVisible(true);
     }
+
+    boolean hasSelectedCards()
+    {
+        return cardsSelected;
+    }
+
+    void selectCards(Vector<Card> selectCards)
+    {
+        cardsSelected = true;
+        cards = new Vector<Card>();
+        for(int i = 0; i < selectCards.size(); i++)
+        {
+            cards.addElement(selectCards.get(i));
+        }
+    }
+
+    Vector<Card> getCards()
+    {
+        return cards;
+    }
+
+    void deselectCards()
+    {
+        cardsSelected = false;
+        cards = null;
+    }
+
     public static void main(String[] args) {
         new SpiderSolitaire();
     }
