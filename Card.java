@@ -5,6 +5,7 @@ import javax.imageio.ImageIO;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Vector;
 
 public class Card extends JPanel {
     enum Suit {
@@ -17,35 +18,93 @@ public class Card extends JPanel {
     private int rank;
     private Suit suit;
     private boolean isFaceUp,
-                    isSelected;
+            isSelected;
     private Image frontImage,
-                  backImage;
+            backImage;
     Card child;
+    Card parent;
+    private SpiderSolitaire spiderSolitaire;
+    private Pile pile = null;
 
-    public Card(Suit s, int r) {
+    public Card(Suit s, int r, SpiderSolitaire solitaire) {
         suit = s;
         rank = r;
         isFaceUp = false;
         isSelected = false;
         child = null;
+        spiderSolitaire = solitaire;
 
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                Card c = Card.this;
-                boolean alreadySelected = c.selected();
-                while (c != null) {
-                    if (alreadySelected)
-                        c.deselect();
-                    else
-                        c.select();
-                    c = c.getChild();
+                if(isFaceUp)
+                {
+                    Card c = Card.this;
+                    Vector<Card> cards = new Vector<Card>();
+                    boolean alreadySelected = c.selected();
+                    if(spiderSolitaire.hasSelectedCards())
+                    {
+                        if(spiderSolitaire.getCards().get(0) == c)
+                        {
+                            while(c != null)
+                            {
+                                c.deselect();
+                                c = c.getChild();
+                            }
+                            spiderSolitaire.deselectCards();
+                        }
+                        else if(spiderSolitaire.getCards().get(0).getSuit() == c.getSuit() && spiderSolitaire.getCards().get(0).getRank() == (c.getRank() - 1)) // I know, a doozy, I'll fix it
+                        {
+                            if(c.hasChild() == false)
+                            {
+                                Pile parentPile = c.getPile();
+                                Pile childPile = spiderSolitaire.getCards().get(0).getPile();
+
+                                c.setChild(spiderSolitaire.getCards().get(0));
+
+                                for(int i = 0; i < spiderSolitaire.getCards().size(); i++)
+                                {
+                                    Card movingCard = spiderSolitaire.getCards().get(i);
+                                    childPile.take(movingCard);
+                                    parentPile.addCard(movingCard);
+                                    movingCard.deselect();
+                                }
+                                spiderSolitaire.deselectCards();
+                            }
+                        }
+                        else
+                        {
+                            for(int i = 0; i < spiderSolitaire.getCards().size(); i++)
+                            {
+                                spiderSolitaire.getCards().get(i).deselect();
+                            }
+                            spiderSolitaire.deselectCards();
+                        } // end of nested if-else
+                    }
+                    else{
+                        while (c != null)
+                        {
+                            if (alreadySelected)
+                            {
+                                c.deselect();
+                            }
+                            else
+                            {
+                                c.select();
+                                cards.addElement(c);
+                            }
+
+                            c = c.getChild();
+                            spiderSolitaire.selectCards(cards);
+                        } // end of while loop
+                    } // end of hasSelectedCards if-else statement
+
                 }
             }
             @Override
             public void mouseReleased(MouseEvent e){
                 repaint();
-           }
+            }
         });
 
         try {
@@ -59,7 +118,7 @@ public class Card extends JPanel {
         }
         setBackground(new Color(0,0,0,0));
         setOpaque(false);
-        setPreferredSize(new Dimension(135, 175));
+        setPreferredSize(new Dimension(112, 145));
     }
 
     public void flip() {
@@ -138,5 +197,15 @@ public class Card extends JPanel {
         super.paintComponent(g);
         int x = isSelected ? 20 : 0;
         g.drawImage(isFaceUp ? frontImage : backImage, x, 0, this);
+    }
+
+    Pile getPile()
+    {
+        return pile;
+    }
+
+    void setPile(Pile newPile)
+    {
+        pile = newPile;
     }
 }
