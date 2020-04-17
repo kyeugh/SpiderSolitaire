@@ -12,12 +12,13 @@ public class Pile extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         layeredPane = new JLayeredPane();
         addCard(c);
-        layeredPane.setPreferredSize(new Dimension(135, offset * cards.size() + (175 - offset)));
+        layeredPane.setPreferredSize(new Dimension(112, offset * cards.size() + (175 - offset)));
         add(layeredPane);
-    }
+    } // end of pile constructor
 
     public Pile(Deck d, int num) {
         cards = new Vector<Card>();
+        Dimension dimension = new Dimension(this.getSize());
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         layeredPane = new JLayeredPane();
         int offset = 50;
@@ -27,30 +28,31 @@ public class Pile extends JPanel {
                 cards.get(depth - 1).setChild(c);
             if (depth == num - 1)
                 c.flip();
-            c.setBounds(0, offset * depth, 135, 175);
+            c.setBounds(0, offset * depth, 112, 175);
             cards.add(c);
+            c.setPile(this);
             layeredPane.add(c, Integer.valueOf(depth));
         }
-        layeredPane.setPreferredSize(new Dimension(135, offset * num + (175 - offset)));
+        layeredPane.setPreferredSize(new Dimension(112, offset * num + (175 - offset)));
         add(layeredPane);
-    }
+    } // end of pile constructor
 
     Card top() {
         return cards.lastElement();
-    }
+    } // end of top
 
     void addCard(Card c) {
         while (c != null) {
             if (cards.size() > 0)
                 top().setChild(c);
             cards.add(c);
-            c.setBounds(0, offset * cards.size(), 135, 175);
+            c.setBounds(0, offset * cards.size(), 112, 175);
             layeredPane.add(c, Integer.valueOf(cards.size()));
             c = c.getChild();
         }
-        layeredPane.setPreferredSize(new Dimension(135, offset * cards.size() + (175 - offset)));
+        layeredPane.setPreferredSize(new Dimension(112, offset * cards.size() + (175 - offset)));
         repaint();
-    }
+    } // end of addCard
 
     Pile take(Card c) {
         boolean found = false;
@@ -67,11 +69,11 @@ public class Pile extends JPanel {
             return new Pile(c);
         else
             return null;
-    }
-    
+    } // end of take
+
     void select() {
         for (Card card : cards)
             card.select();
-    }
+    } // end of select
 
-}
+} // end of pile class
