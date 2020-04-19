@@ -36,7 +36,7 @@ public class Card extends JPanel {
 
         addMouseListener(new MouseAdapter() {
             @Override
-            public void mousePressed(MouseEvent e) {
+            public void mouseClicked(MouseEvent e) {
                 if(isFaceUp)
                 {
                     Card c = Card.this;
@@ -57,18 +57,14 @@ public class Card extends JPanel {
                         {
                             if(c.hasChild() == false)
                             {
-                                Pile parentPile = c.getPile();
-                                Pile childPile = spiderSolitaire.getCards().get(0).getPile();
+                                Card cardToAdd = spiderSolitaire.getCards().get(0);
+                                Pile cPile = cardToAdd.getPile();
+                                
 
                                 c.setChild(spiderSolitaire.getCards().get(0));
 
-                                for(int i = 0; i < spiderSolitaire.getCards().size(); i++)
-                                {
-                                    Card movingCard = spiderSolitaire.getCards().get(i);
-                                    childPile.take(movingCard);
-                                    parentPile.addCard(movingCard);
-                                    movingCard.deselect();
-                                }
+                                Card.this.pile.addCard(cPile.take(cardToAdd).top());
+                                cardToAdd.deselect();
                                 spiderSolitaire.deselectCards();
                             }
                         }
@@ -98,27 +94,24 @@ public class Card extends JPanel {
                             spiderSolitaire.selectCards(cards);
                         } // end of while loop
                     } // end of hasSelectedCards if-else statement
-
+                    pile.recalcSize();
+                    pile.repaint();
                 }
-            }
-            @Override
-            public void mouseReleased(MouseEvent e){
-                repaint();
             }
         });
 
         try {
             Image cardImage = ImageIO.read(new File(getImagePath()));
-            frontImage = cardImage.getScaledInstance(115, 175, Image.SCALE_SMOOTH);
+            frontImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
             cardImage = ImageIO.read(new File("assets/green_back.png"));
-            backImage = cardImage.getScaledInstance(115, 175, Image.SCALE_SMOOTH);
+            backImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
         }
         catch (IOException e) {
             e.printStackTrace();
         }
         setBackground(new Color(0,0,0,0));
         setOpaque(false);
-        setPreferredSize(new Dimension(112, 145));
+        setPreferredSize(new Dimension(115, 145));
     }
 
     public void flip() {

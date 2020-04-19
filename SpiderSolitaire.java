@@ -9,7 +9,6 @@ class SpiderSolitaire {
     Vector<Card> cards;
 
     public SpiderSolitaire() {
-        deck = new Deck(4, this);
         cardsSelected = false; // for identifying that a group of cards has been clicked
         cards = null; // for holding a batch of selected cards
         frame = new JFrame("Spider Solitaire");
@@ -21,6 +20,8 @@ class SpiderSolitaire {
         gbc.weightx = .8;
         gbc.weighty = 1;
         /* game code goes here */
+
+        deck = new Deck(1, this);
         Pile piles[] = new Pile[10];
         for (int i = 0; i < 10; i++) {
             if(i < 4)
