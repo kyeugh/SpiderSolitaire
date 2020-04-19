@@ -5,7 +5,7 @@ import java.awt.*;
 public class Pile extends JPanel {
     private Vector<Card> cards;
     private JLayeredPane layeredPane;
-    private static int offset = 50;
+    private static int offset = 35;
 
     public Pile(Card c) {
         cards = new Vector<Card>();
@@ -20,7 +20,6 @@ public class Pile extends JPanel {
         cards = new Vector<Card>();
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         layeredPane = new JLayeredPane();
-        int offset = 50;
         for (int depth = 0; depth < num; depth++) {
             Card c = d.drawCard();
             if (depth > 0)
@@ -36,7 +35,11 @@ public class Pile extends JPanel {
         add(layeredPane);
     } // end of pile constructor
 
-    Card top() {
+    public Card top() {
+        return cards.firstElement();
+    }
+
+    public Card bottom() {
         return cards.lastElement();
     } // end of top
 
@@ -44,7 +47,7 @@ public class Pile extends JPanel {
         while (c != null) {
             c.setPile(this);
             if (cards.size() > 0)
-                top().setChild(c);
+                bottom().setChild(c);
             c.setBounds(0, offset * cards.size(), 115, 145);
             cards.add(c);
             layeredPane.add(c, Integer.valueOf(cards.size()));

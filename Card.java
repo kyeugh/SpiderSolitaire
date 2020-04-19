@@ -59,12 +59,11 @@ public class Card extends JPanel {
                             {
                                 Card cardToAdd = spiderSolitaire.getCards().get(0);
                                 Pile cPile = cardToAdd.getPile();
-                                
-
-                                c.setChild(spiderSolitaire.getCards().get(0));
-
                                 Card.this.pile.addCard(cPile.take(cardToAdd).top());
-                                cardToAdd.deselect();
+                                while (cardToAdd != null) {
+                                    cardToAdd.deselect();
+                                    cardToAdd = cardToAdd.getChild();
+                                }
                                 spiderSolitaire.deselectCards();
                             }
                         }
@@ -91,8 +90,8 @@ public class Card extends JPanel {
                             }
 
                             c = c.getChild();
-                            spiderSolitaire.selectCards(cards);
                         } // end of while loop
+                        spiderSolitaire.selectCards(cards);
                     } // end of hasSelectedCards if-else statement
                     pile.recalcSize();
                     pile.repaint();
