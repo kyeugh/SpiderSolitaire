@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.Vector;
 
 class SpiderSolitaire {
@@ -14,6 +15,7 @@ class SpiderSolitaire {
         frame = new JFrame("Spider Solitaire");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
+        frame.getContentPane().setBackground(new Color(25, 160, 15));
         frame.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTH;
@@ -30,18 +32,34 @@ class SpiderSolitaire {
                 piles[i] = new Pile(deck, 5);
             frame.add(piles[i], gbc);
         }
-
-        // test code: should be removed
-        /*
-        Card testCard = new Card(Card.Suit.Spades, 1, this);
-        testCard.setChild(new Card(Card.Suit.Hearts, 12, this));
-        piles[1].addCard(testCard);
-        piles[1].take(testCard);
-        */
-
-        /* end game code */
         /* menu bar */
         JMenuBar menuBar = new JMenuBar();
+
+        JMenuItem dealMenu = new JMenuItem("Deal!") {
+            public Dimension getMaximumSize() {
+                Dimension d1 = super.getPreferredSize();
+                Dimension d2 = super.getMaximumSize();
+                d2.width = d1.width;
+                return d2;
+            }
+        };
+        dealMenu.setMnemonic('d');
+        dealMenu.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Card c;
+                for (Pile pile : piles) {
+                    c = deck.drawCard();
+                    if (c != null) {
+                        c.flip();
+                        pile.addCard(c);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "The deck is empty!");
+                        break;
+                    }
+                }
+            }
+        });
 
         JMenu gameMenu = new JMenu("Game");
         gameMenu.setMnemonic('g');
@@ -58,6 +76,7 @@ class SpiderSolitaire {
         helpMenu.setMnemonic('t');
         helpMenu.add(howtoMenu);
 
+        menuBar.add(dealMenu);
         menuBar.add(gameMenu);
         menuBar.add(helpMenu);
         frame.setJMenuBar(menuBar);

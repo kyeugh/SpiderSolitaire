@@ -53,7 +53,8 @@ public class Card extends JPanel {
                             }
                             spiderSolitaire.deselectCards();
                         }
-                        else if(spiderSolitaire.getCards().get(0).getSuit() == c.getSuit() && spiderSolitaire.getCards().get(0).getRank() == (c.getRank() - 1)) // I know, a doozy, I'll fix it
+                        else if(spiderSolitaire.getCards().get(0).getSuit() == c.getSuit()
+                                && spiderSolitaire.getCards().get(0).getRank() == (c.getRank() - 1)) // I know, a doozy, I'll fix it
                         {
                             if(c.hasChild() == false)
                             {
@@ -65,6 +66,9 @@ public class Card extends JPanel {
                                     cardToAdd = cardToAdd.getChild();
                                 }
                                 spiderSolitaire.deselectCards();
+
+                            if (!cPile.bottom().faceUp())
+                                cPile.bottom().flip();
                             }
                         }
                         else
@@ -77,22 +81,22 @@ public class Card extends JPanel {
                         } // end of nested if-else
                     }
                     else{
-                        while (c != null)
-                        {
-                            if (alreadySelected)
-                            {
+                        if (alreadySelected) {
+                            while (c != null) {
                                 c.deselect();
+                                c = c.getChild();
                             }
-                            else
-                            {
+                            spiderSolitaire.deselectCards();
+                        }
+                        else if (c.isLegalStack()) {
+                            while (c != null) {
                                 c.select();
-                                cards.addElement(c);
+                                cards.add(c);
+                                c = c.getChild();
                             }
-
-                            c = c.getChild();
-                        } // end of while loop
-                        spiderSolitaire.selectCards(cards);
-                    } // end of hasSelectedCards if-else statement
+                            spiderSolitaire.selectCards(cards);
+                        }
+                    }
                     pile.recalcSize();
                     pile.repaint();
                 }
@@ -102,7 +106,7 @@ public class Card extends JPanel {
         try {
             Image cardImage = ImageIO.read(new File(getImagePath()));
             frontImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
-            cardImage = ImageIO.read(new File("assets/green_back.png"));
+            cardImage = ImageIO.read(new File("assets/red_back.png"));
             backImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
         }
         catch (IOException e) {
@@ -115,6 +119,10 @@ public class Card extends JPanel {
 
     public void flip() {
         isFaceUp = !isFaceUp;
+    }
+
+    public boolean faceUp() {
+        return isFaceUp;
     }
 
     public int getRank() {
@@ -149,6 +157,20 @@ public class Card extends JPanel {
 
     public boolean selected() {
         return isSelected;
+    }
+
+    public boolean isLegalStack() {
+        Card c = this,
+             next = this.getChild();
+        while (next != null) {
+            if (c.getSuit() != next.getSuit())
+                return false;
+            else if (c.getRank() != next.getRank() + 1)
+                return false;
+            c = next;
+            next = next.getChild();
+        }
+        return true;
     }
 
     private String getImagePath() {

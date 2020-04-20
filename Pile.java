@@ -9,6 +9,7 @@ public class Pile extends JPanel {
 
     public Pile(Card c) {
         cards = new Vector<Card>();
+        setOpaque(false);
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         layeredPane = new JLayeredPane();
         addCard(c);
@@ -18,6 +19,7 @@ public class Pile extends JPanel {
 
     public Pile(Deck d, int num) {
         cards = new Vector<Card>();
+        setOpaque(false);
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         layeredPane = new JLayeredPane();
         for (int depth = 0; depth < num; depth++) {
@@ -59,15 +61,22 @@ public class Pile extends JPanel {
 
     Pile take(Card c) {
         boolean found = false;
+        Card newBottom = null;
+        int cIndex = -1;
         for (int i = 0; i < cards.size(); i++) {
             if (cards.get(i) == c) {
-                if (i > 0)
-                    cards.get(i - 1).setChild(null);
+                if (i > 0) {
+                    newBottom = cards.get(i - 1);
+                    newBottom.setChild(null);
+                    if (!newBottom.faceUp())
+                        newBottom.flip();
+                    cIndex = i;
+                }
                 found = true;
             }
-            if (found)
-                cards.remove(i);
         }
+        if (cIndex >= 0) // removing inside loop causes off-by-one errors
+            cards.subList(cIndex, cards.size()).clear(); // removeRange() is protected; this is the best approximation
         if (found)
             return new Pile(c);
         else

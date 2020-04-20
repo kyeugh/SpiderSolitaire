@@ -32,7 +32,6 @@ public class Deck {
 
     public Card drawCard() {
         if (deck.empty()) {
-            System.out.println("ERROR: no cards left");
             return null;
         }
         else
