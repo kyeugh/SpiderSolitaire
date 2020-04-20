@@ -32,6 +32,7 @@ public class Card extends JPanel {
         isFaceUp = false;
         isSelected = false;
         child = null;
+        parent = null;
         spiderSolitaire = solitaire;
 
         addMouseListener(new MouseAdapter() {
@@ -59,6 +60,9 @@ public class Card extends JPanel {
                             if(c.hasChild() == false)
                             {
                                 Card cardToAdd = spiderSolitaire.getCards().get(0);
+                                if(cardToAdd.hasParent())
+                                    cardToAdd.obtainParent().setChild(null);
+                                cardToAdd.setParent(c);
                                 Pile cPile = cardToAdd.getPile();
                                 cardToAdd.take();
                                 Card.this.pile.addCard(cardToAdd);
@@ -68,8 +72,8 @@ public class Card extends JPanel {
                                 }
                                 spiderSolitaire.deselectCards();
 
-                            if (!cPile.empty() && !cPile.bottom().faceUp())
-                                cPile.bottom().flip();
+                                if (!cPile.empty() && !cPile.bottom().faceUp())
+                                    cPile.bottom().flip();
                             }
                         }
                         else
@@ -150,6 +154,21 @@ public class Card extends JPanel {
         return child != null;
     }
 
+    public void setParent(Card c)
+    {
+        parent = c;
+    }
+
+    public boolean hasParent()
+    {
+        return parent != null;
+    }
+
+    public Card obtainParent()
+    {
+        return parent;
+    }
+
     public void select() {
         isSelected = true;
         repaint();
@@ -166,7 +185,7 @@ public class Card extends JPanel {
 
     public boolean isLegalStack() {
         Card c = this,
-             next = this.getChild();
+                next = this.getChild();
         while (next != null) {
             if (c.getSuit() != next.getSuit())
                 return false;
