@@ -65,6 +65,12 @@ class SpiderSolitaire {
         gameMenu.setMnemonic('g');
         JMenuItem restartMenu = new JMenuItem("Restart");
         restartMenu.setMnemonic('r');
+        restartMenu.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+                new SpiderSolitaire();
+            }
+        });
         JMenuItem pauseMenu = new JMenuItem("Pause");
         pauseMenu.setMnemonic('p');
         gameMenu.add(restartMenu);
@@ -80,6 +86,8 @@ class SpiderSolitaire {
         menuBar.add(gameMenu);
         menuBar.add(helpMenu);
         frame.setJMenuBar(menuBar);
+
+       // JScrollPane scrollPane = new JScrollPane(frame.getContentPane(), ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         frame.setSize(1250, 900);
         frame.setVisible(true);

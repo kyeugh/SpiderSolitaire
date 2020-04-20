@@ -36,6 +36,10 @@ public class Pile extends JPanel {
         recalcSize();
         add(layeredPane);
     } // end of pile constructor
+    
+    public boolean empty() {
+        return cards.size() == 0;
+    }
 
     public Card top() {
         return cards.firstElement();
@@ -44,6 +48,26 @@ public class Pile extends JPanel {
     public Card bottom() {
         return cards.lastElement();
     } // end of top
+
+    public void resolve() {
+        Card c = null;
+        int cIndex = -1;
+        for (Card card : cards) {
+            if (card.getRank() == 13) {
+                c = card;
+                cIndex = cards.indexOf(c);
+                break;
+            }
+        }
+        if (c != null && c.isLegalStack()) {
+            Card lastCard = c;
+            while (lastCard.getChild() != null)
+                lastCard = lastCard.getChild();
+            if (lastCard.getRank() == 1) {
+                take(c);
+            }
+        }
+    }
 
     void addCard(Card c) {
         while (c != null) {
@@ -55,37 +79,34 @@ public class Pile extends JPanel {
             layeredPane.add(c, Integer.valueOf(cards.size()));
             c = c.getChild();
         }
+        resolve();
         recalcSize();
         repaint();
     } // end of addCard
 
-    Pile take(Card c) {
-        boolean found = false;
+    void take(Card c) {
         Card newBottom = null;
-        int cIndex = -1;
-        for (int i = 0; i < cards.size(); i++) {
-            if (cards.get(i) == c) {
-                if (i > 0) {
-                    newBottom = cards.get(i - 1);
-                    newBottom.setChild(null);
-                    if (!newBottom.faceUp())
-                        newBottom.flip();
-                    cIndex = i;
-                }
-                found = true;
+        int cIndex = cards.indexOf(c);
+        int num = cards.size() - cIndex;
+        if (cIndex >= 0) {
+            if (cIndex > 0) {
+                newBottom = cards.get(cIndex - 1);
+                newBottom.setChild(null);
+                if (!newBottom.faceUp())
+                    newBottom.flip();
             }
+            for (int i = 0; i < num; i++) {
+                layeredPane.remove(layeredPane.lowestLayer());
+            }
+            cards.subList(cIndex, cards.size()).clear();
         }
-        if (cIndex >= 0) // removing inside loop causes off-by-one errors
-            cards.subList(cIndex, cards.size()).clear(); // removeRange() is protected; this is the best approximation
-        if (found)
-            return new Pile(c);
-        else
-            return null;
+        recalcSize();
     } // end of take
 
     public void recalcSize() {
         layeredPane.setPreferredSize(new Dimension(115, (offset * cards.size()) + (145 - offset)));
         revalidate();
+        repaint();
     }
 
     void select() {
