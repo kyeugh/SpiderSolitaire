@@ -51,11 +51,9 @@ public class Pile extends JPanel {
 
     public void resolve() {
         Card c = null;
-        int cIndex = -1;
         for (Card card : cards) {
-            if (card.getRank() == 13) {
+            if (card.faceUp() && card.getRank() == 13) {
                 c = card;
-                cIndex = cards.indexOf(c);
                 break;
             }
         }
@@ -81,7 +79,6 @@ public class Pile extends JPanel {
         }
         resolve();
         recalcSize();
-        repaint();
     } // end of addCard
 
     void take(Card c) {
