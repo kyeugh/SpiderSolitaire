@@ -10,5 +10,7 @@ See [here](https://bicyclecards.com/how-to-play/spider-solitaire/) for another s
 Cards are selected by clicking.  A stack of cards may be selected by clicking the top card of the stack the player wishes to select, though the stack will not be selected if its suits do not all match and it is not strictly in decreasing order of rank.  Only one card or stack may be selected at once.  If a card or stack is already selected, clicking a card will attempt to place the card or stack onto the clicked card.  If the move is legal, it will be carried out; otherwise, the selected cards are deselected.  The player may deal by pressing the "Deal!" button in the menu bar, or start a new game by selecting the desired number of suits for the new game under the "Restart" submenu.
 
 ## Division of labor
-... stuff goes here...
+Taylor Lundy:
+  Worked on adding the ability to swap cards between piles, moving stacks at a time, started basic deck class, flipping cards once they have no child, added ability to place cards on empty stacks, fixed bugs such as being able to place a card on a pile after a legal stack is cleared, etc..
+  
 This project was managed using GitHub.  The repository is private, but can be made public upon request if you'd like to see the full commit history.
