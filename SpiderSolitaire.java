@@ -132,14 +132,10 @@ class SpiderSolitaire {
     }
 
     public void checkWin() {
-        boolean won = false;
-        if (deck.isEmpty())
+        if (deck.isEmpty()) {
             for (Pile pile : piles)
-                if (!pile.empty()) {
-                    won = true;
-                    break;
-                }
-        if (won) {
+                if (!pile.empty())
+                    return;
             int playAgain = JOptionPane.showConfirmDialog(null, "Congratulations, you won!\nPlay again?", "You won!", JOptionPane.YES_NO_OPTION);
             if (playAgain == JOptionPane.YES_OPTION) {
                 frame.dispose();
