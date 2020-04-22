@@ -45,29 +45,15 @@ public class Pile extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e)
             {
-                Pile p = Pile.this;
-                if (p.empty() && p.spiderSolitaire.hasSelectedCards())
-                {
-                    if(p.spiderSolitaire.getCards().get(0).hasParent())
-                    {
-                        p.spiderSolitaire.getCards().get(0).obtainParent().setChild(null);
-                        p.spiderSolitaire.getCards().get(0).setParent(null);
-                    }
-
-                    Card cardToAdd = p.spiderSolitaire.getCards().get(0);
-                    Pile cPile = cardToAdd.getPile();
+                if (empty() && spiderSolitaire.hasSelectedCards()) {
+                    Card cardToAdd = spiderSolitaire.getCards().get(0);
                     cardToAdd.take();
-                    p.addCard(cardToAdd);
-                    while(cardToAdd != null)
-                    {
+                    addCard(cardToAdd);
+                    while (cardToAdd != null) {
                         cardToAdd.deselect();
                         cardToAdd = cardToAdd.getChild();
                     }
-
                     spiderSolitaire.deselectCards();
-
-                    if (!cPile.empty() && !cPile.bottom().faceUp())
-                        cPile.bottom().flip();
                 }
             }
         });
@@ -90,11 +76,9 @@ public class Pile extends JPanel {
 
     public void resolve() {
         Card c = null;
-        int cIndex = -1;
         for (Card card : cards) {
             if (card.getRank() == 13) {
                 c = card;
-                cIndex = cards.indexOf(c);
                 break;
             }
         }
@@ -117,7 +101,7 @@ public class Pile extends JPanel {
             }
             c.setBounds(0, offset * cards.size(), 115, 145);
             cards.add(c);
-            layeredPane.add(c, Integer.valueOf(cards.size()));
+            layeredPane.add(c, Integer.valueOf(cards.size() + 1));
             c = c.getChild();
         }
         resolve();
@@ -136,16 +120,20 @@ public class Pile extends JPanel {
                 if (!newBottom.faceUp())
                     newBottom.flip();
             }
-            for (int i = 0; i < num; i++) {
-                layeredPane.remove(layeredPane.lowestLayer());
-            }
+            if (num == cards.size())
+                layeredPane.removeAll();
+            else
+                while (c != null) {
+                    layeredPane.remove(c);
+                    c = c.getChild();
+                }
             cards.subList(cIndex, cards.size()).clear();
         }
         recalcSize();
     } // end of take
 
     public void recalcSize() {
-        layeredPane.setPreferredSize(new Dimension(115, (offset * cards.size()) + (145 - offset)));
+        layeredPane.setPreferredSize(new Dimension(115, (offset * (cards.size() + 1)) + (145 - offset)));
         revalidate();
         repaint();
     }
