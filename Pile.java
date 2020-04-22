@@ -83,6 +83,8 @@ public class Pile extends JPanel {
             }
         }
         if (c != null && c.isLegalStack()) {
+            if (c.hasParent())
+                c.obtainParent().setChild(null);
             Card lastCard = c;
             while (lastCard.getChild() != null)
                 lastCard = lastCard.getChild();
