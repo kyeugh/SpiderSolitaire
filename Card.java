@@ -8,8 +8,8 @@ import java.util.Vector;
 public class Card extends JPanel {
     enum Suit {
         Spades,
-        Clubs,
         Diamonds,
+        Clubs,
         Hearts
     }
 
