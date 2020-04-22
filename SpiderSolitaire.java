@@ -46,34 +46,32 @@ class SpiderSolitaire {
         dealMenu.setMnemonic('d');
         dealMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Card c;
-                for (Pile pile : piles) {
-                    c = deck.drawCard();
-                    if (c != null) {
-                        c.flip();
-                        pile.addCard(c);
+                boolean allSpacesFilled = true;
+                for (Pile p : piles)
+                    if (p.empty())
+                        allSpacesFilled = false;
+                if (allSpacesFilled) {
+                    Card c;
+                    for (Pile pile : piles) {
+                        c = deck.drawCard();
+                        if (c != null) {
+                            c.flip();
+                            pile.addCard(c);
+                        }
+                        else {
+                            JOptionPane.showMessageDialog(null, "The deck is empty!");
+                            break;
+                        }
                     }
-                    else {
-                        JOptionPane.showMessageDialog(null, "The deck is empty!");
-                        break;
-                    }
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "You may only deal when all empty spaces are occupied.");
                 }
             }
         });
 
-        JMenu gameMenu = new JMenu("Game");
-        gameMenu.setMnemonic('g');
         JMenu restartMenu = new JMenu("Restart");
         restartMenu.setMnemonic('r');
-        restartMenu.addMouseListener(new MouseListener() {
-            public void mouseClicked(MouseEvent e) {}
-            public void mousePressed(MouseEvent e) {}
-            public void mouseReleased(MouseEvent e) {}
-            public void mouseExited(MouseEvent e) {}
-            public void mouseEntered(MouseEvent e) {
-                restartMenu.doClick();
-            }
-        });
         JMenuItem newGame1 = new JMenuItem("1 suit");
         newGame1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -98,20 +96,9 @@ class SpiderSolitaire {
         restartMenu.add(newGame1);
         restartMenu.add(newGame2);
         restartMenu.add(newGame4);
-        JMenuItem pauseMenu = new JMenuItem("Pause");
-        pauseMenu.setMnemonic('p');
-        gameMenu.add(restartMenu);
-        gameMenu.add(pauseMenu);
-
-        JMenu helpMenu = new JMenu("Help");
-        helpMenu.setMnemonic('h');
-        JMenuItem howtoMenu = new JMenuItem("How to play");
-        helpMenu.setMnemonic('t');
-        helpMenu.add(howtoMenu);
 
         menuBar.add(dealMenu);
-        menuBar.add(gameMenu);
-        menuBar.add(helpMenu);
+        menuBar.add(restartMenu);
         frame.setJMenuBar(menuBar);
 
         frame.setSize(1250, 900);
