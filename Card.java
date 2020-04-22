@@ -2,8 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.imageio.ImageIO;
-
-import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
 
@@ -104,20 +102,20 @@ public class Card extends JPanel {
                     }
                     pile.recalcSize();
                     pile.repaint();
+                    spiderSolitaire.checkWin();
                 }
             }
         });
 
         try {
-            Image cardImage = ImageIO.read(new File(getImagePath()));
+            Image cardImage = ImageIO.read(getClass().getResourceAsStream(getImagePath()));
             frontImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
-            cardImage = ImageIO.read(new File("assets/red_back.png"));
+            cardImage = ImageIO.read(getClass().getResourceAsStream("/assets/red_back.png"));
             backImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
         }
         catch (IOException e) {
             e.printStackTrace();
         }
-        setBackground(new Color(0,0,0,0));
         setOpaque(false);
         setPreferredSize(new Dimension(115, 145));
     }
@@ -198,7 +196,7 @@ public class Card extends JPanel {
     }
 
     private String getImagePath() {
-        StringBuilder imgPath = new StringBuilder("assets/");
+        StringBuilder imgPath = new StringBuilder("/assets/");
         imgPath.append(getRank());
         imgPath.append(getSuit().name().charAt(0));
         imgPath.append(".png");

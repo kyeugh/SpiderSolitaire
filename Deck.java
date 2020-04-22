@@ -19,6 +19,10 @@ public class Deck {
         shuffle();
     }
 
+    public boolean isEmpty() {
+        return deck.empty();
+    }
+
     public Card top() {
         Card topCard;
         try { // peek() throws exception when empty

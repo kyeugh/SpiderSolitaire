@@ -5,13 +5,14 @@ import java.util.Vector;
 
 class SpiderSolitaire {
     Deck deck;
+    Pile piles[];
     JFrame frame;
-    boolean cardsSelected;
-    Vector<Card> cards;
+    boolean cardsSelected = false;
+    Vector<Card> cards = null;
+    int numSuits;
 
-    public SpiderSolitaire(int numDecks) {
-        cardsSelected = false; // for identifying that a group of cards has been clicked
-        cards = null; // for holding a batch of selected cards
+    public SpiderSolitaire(int n) {
+        numSuits = n;
         frame = new JFrame("Spider Solitaire");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
@@ -22,8 +23,8 @@ class SpiderSolitaire {
         gbc.weightx = .8;
         gbc.weighty = 1;
         /* game code goes here */
-        deck = new Deck(numDecks, this);
-        Pile piles[] = new Pile[10];
+        deck = new Deck(numSuits, this);
+        piles = new Pile[10];
         for (int i = 0; i < 10; i++) {
             if(i < 4)
                 piles[i] = new Pile(deck, 6, this);
@@ -117,12 +118,12 @@ class SpiderSolitaire {
         frame.setVisible(true);
     }
 
-    boolean hasSelectedCards()
+    public boolean hasSelectedCards()
     {
         return cardsSelected;
     }
 
-    void selectCards(Vector<Card> selectCards)
+    public void selectCards(Vector<Card> selectCards)
     {
         cardsSelected = true;
         cards = new Vector<Card>();
@@ -132,15 +133,34 @@ class SpiderSolitaire {
         }
     }
 
-    Vector<Card> getCards()
+    public Vector<Card> getCards()
     {
         return cards;
     }
 
-    void deselectCards()
+    public void deselectCards()
     {
         cardsSelected = false;
         cards = null;
+    }
+
+    public void checkWin() {
+        boolean won = false;
+        if (deck.isEmpty())
+            for (Pile pile : piles)
+                if (!pile.empty()) {
+                    won = true;
+                    break;
+                }
+        if (won) {
+            int playAgain = JOptionPane.showConfirmDialog(null, "Congratulations, you won!\nPlay again?", "You won!", JOptionPane.YES_NO_OPTION);
+            if (playAgain == JOptionPane.YES_OPTION) {
+                frame.dispose();
+                new SpiderSolitaire(numSuits);
+            }
+            else
+                System.exit(0);
+        }
     }
 
     public static void main(String[] args) {
