@@ -110,7 +110,7 @@ public class Card extends JPanel {
         try {
             Image cardImage = ImageIO.read(getClass().getResourceAsStream(getImagePath()));
             frontImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
-            cardImage = ImageIO.read(getClass().getResourceAsStream("/assets/red_back.png"));
+            cardImage = ImageIO.read(getClass().getResourceAsStream("assets/red_back.png"));
             backImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
         }
         catch (IOException e) {
@@ -196,7 +196,7 @@ public class Card extends JPanel {
     }
 
     private String getImagePath() {
-        StringBuilder imgPath = new StringBuilder("/assets/");
+        StringBuilder imgPath = new StringBuilder("assets/");
         imgPath.append(getRank());
         imgPath.append(getSuit().name().charAt(0));
         imgPath.append(".png");
