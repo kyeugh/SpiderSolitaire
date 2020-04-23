@@ -20,7 +20,6 @@ public class Card extends JPanel {
     private Image frontImage,
             backImage;
     Card child;
-    Card parent;
     private SpiderSolitaire spiderSolitaire;
     private Pile pile = null;
 
@@ -30,7 +29,6 @@ public class Card extends JPanel {
         isFaceUp = false;
         isSelected = false;
         child = null;
-        parent = null;
         spiderSolitaire = solitaire;
 
         addMouseListener(new MouseAdapter() {
@@ -44,6 +42,7 @@ public class Card extends JPanel {
                     if(spiderSolitaire.hasSelectedCards())
                     {
                         if(spiderSolitaire.getCards().get(0) == c)
+                        // clicking the same card twice just deselects it
                         {
                             while(c != null)
                             {
@@ -53,17 +52,16 @@ public class Card extends JPanel {
                             spiderSolitaire.deselectCards();
                         }
                         else if(spiderSolitaire.getCards().get(0).getSuit() == c.getSuit()
-                                && spiderSolitaire.getCards().get(0).getRank() == (c.getRank() - 1)) // I know, a doozy, I'll fix it
+                                && spiderSolitaire.getCards().get(0).getRank() == (c.getRank() - 1))
+                            // if clicking on a card which the hand can be added to
                         {
                             if(c.hasChild() == false)
+                            // only place cards on the bottom of a pile
                             {
                                 Card cardToAdd = spiderSolitaire.getCards().get(0);
-                                if(cardToAdd.hasParent())
-                                    cardToAdd.obtainParent().setChild(null);
-                                cardToAdd.setParent(c);
                                 Pile cPile = cardToAdd.getPile();
                                 cardToAdd.take();
-                                Card.this.pile.addCard(cardToAdd);
+                                pile.addCard(cardToAdd);
                                 while (cardToAdd != null) {
                                     cardToAdd.deselect();
                                     cardToAdd = cardToAdd.getChild();
@@ -71,10 +69,11 @@ public class Card extends JPanel {
                                 spiderSolitaire.deselectCards();
 
                                 if (!cPile.empty() && !cPile.bottom().faceUp())
-                                    cPile.bottom().flip();
+                                    cPile.bottom().flip();  // flip the bottom card if it's face-down
                             }
                         }
                         else
+                        // upon attempting an illegal move
                         {
                             for(int i = 0; i < spiderSolitaire.getCards().size(); i++)
                             {
@@ -84,6 +83,7 @@ public class Card extends JPanel {
                         } // end of nested if-else
                     }
                     else{
+                        // if the hand is empty
                         if (alreadySelected) {
                             while (c != null) {
                                 c.deselect();
@@ -91,7 +91,7 @@ public class Card extends JPanel {
                             }
                             spiderSolitaire.deselectCards();
                         }
-                        else if (c.isLegalStack()) {
+                        else if (c.isLegalStack()) {  // don't pick up cards that aren't in decreasing order/matching suits
                             while (c != null) {
                                 c.select();
                                 cards.add(c);
@@ -101,7 +101,6 @@ public class Card extends JPanel {
                         }
                     }
                     pile.recalcSize();
-                    pile.repaint();
                     spiderSolitaire.checkWin();
                 }
             }
@@ -152,21 +151,6 @@ public class Card extends JPanel {
         return child != null;
     }
 
-    public void setParent(Card c)
-    {
-        parent = c;
-    }
-
-    public boolean hasParent()
-    {
-        return parent != null;
-    }
-
-    public Card obtainParent()
-    {
-        return parent;
-    }
-
     public void select() {
         isSelected = true;
         repaint();
@@ -182,6 +166,10 @@ public class Card extends JPanel {
     }
 
     public boolean isLegalStack() {
+        /*
+            checks whether the card and all its children are
+            in strictly decreasing order and have matching suits.
+        */
         Card c = this,
                 next = this.getChild();
         while (next != null) {

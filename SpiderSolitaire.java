@@ -15,7 +15,7 @@ class SpiderSolitaire {
         numSuits = n;
         frame = new JFrame("Spider Solitaire");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
+        frame.setResizable(true);
         frame.getContentPane().setBackground(new Color(25, 160, 15));
         frame.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -112,6 +112,7 @@ class SpiderSolitaire {
 
     public void selectCards(Vector<Card> selectCards)
     {
+        /* adds the passed in vector to the hand */
         cardsSelected = true;
         cards = new Vector<Card>();
         for(int i = 0; i < selectCards.size(); i++)
@@ -122,6 +123,7 @@ class SpiderSolitaire {
 
     public Vector<Card> getCards()
     {
+        /* returns the hand */
         return cards;
     }
 
@@ -132,6 +134,7 @@ class SpiderSolitaire {
     }
 
     public void checkWin() {
+        /* checks to see if the game is won, and handles it if so */
         if (deck.isEmpty()) {
             for (Pile pile : piles)
                 if (!pile.empty())

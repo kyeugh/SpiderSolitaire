@@ -16,10 +16,10 @@ public class Pile extends JPanel {
         setOpaque(false);
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         layeredPane = new JLayeredPane();
-        addCard(c);
+        addCard(c); // adds all children as well
         recalcSize();
         add(layeredPane);
-    } // end of pile constructor
+    }
 
     public Pile(Deck d, int num, SpiderSolitaire solitaire) {
         cards = new Vector<Card>();
@@ -31,7 +31,6 @@ public class Pile extends JPanel {
             Card c = d.drawCard();
             if (depth > 0) {
                 cards.get(depth - 1).setChild(c);
-                c.setParent(cards.get(depth - 1));
             }
             if (depth == num - 1)
                 c.flip();
@@ -45,10 +44,11 @@ public class Pile extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e)
             {
+                // we're only clicking the pile when there are no cards remaining
                 if (empty() && spiderSolitaire.hasSelectedCards()) {
                     Card cardToAdd = spiderSolitaire.getCards().get(0);
                     cardToAdd.take();
-                    addCard(cardToAdd);
+                    addCard(cardToAdd); // don't need to verify; any card can be added to an empty space
                     while (cardToAdd != null) {
                         cardToAdd.deselect();
                         cardToAdd = cardToAdd.getChild();
@@ -60,10 +60,10 @@ public class Pile extends JPanel {
 
         recalcSize();
         add(layeredPane);
-    } // end of pile constructor
+    }
 
     public boolean empty() {
-        return cards.size() == 0;
+        return cards.isEmpty();
     }
 
     public Card top() {
@@ -72,17 +72,21 @@ public class Pile extends JPanel {
 
     public Card bottom() {
         return cards.lastElement();
-    } // end of top
+    }
 
     public void resolve() {
+        /* 
+            checks the pile for complete stacks of king through ace,
+            all with matching suits, and removes the cards from
+            play if found.
+        */
         Card c = null;
         for (Card card : cards) {
-            if (card.getRank() == 13) {
-                c = card;
-                break;
+            if (card.getRank() == 13 && card.faceUp()) {
+                c = card;   // check from the lowest king down
             }
         }
-        if (c != null && c.isLegalStack()) {
+        if (c != null && c.isLegalStack()) { // ensures ranks are in decreasing order and suits match
             Card lastCard = c;
             while (lastCard.getChild() != null)
                 lastCard = lastCard.getChild();
@@ -95,10 +99,8 @@ public class Pile extends JPanel {
     void addCard(Card c) {
         while (c != null) {
             c.setPile(this);
-            if (cards.size() > 0) {
+            if (cards.size() > 0)
                 bottom().setChild(c);
-                c.setParent(bottom());
-            }
             c.setBounds(0, offset * cards.size(), 115, 145);
             cards.add(c);
             layeredPane.add(c, Integer.valueOf(cards.size() + 1));
@@ -106,13 +108,12 @@ public class Pile extends JPanel {
         }
         resolve();
         recalcSize();
-        repaint();
     } // end of addCard
 
     void take(Card c) {
         Card newBottom = null;
         int cIndex = cards.indexOf(c);
-        int num = cards.size() - cIndex;
+        int num = cards.size() - cIndex;    // number of cards in stack
         if (cIndex >= 0) {
             if (cIndex > 0) {
                 newBottom = cards.get(cIndex - 1);
@@ -124,7 +125,7 @@ public class Pile extends JPanel {
                 layeredPane.removeAll();
             else
                 while (c != null) {
-                    layeredPane.remove(c);
+                    layeredPane.remove(c);  // removing by layer index doesn't work
                     c = c.getChild();
                 }
             cards.subList(cIndex, cards.size()).clear();
